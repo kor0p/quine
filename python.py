@@ -1,4 +1,5 @@
 import os
+__file__ = __file__.split('/')[-1]
 _file = 'node-js.js'
 
 with open(_file, 'w+') as js:
@@ -22,8 +23,10 @@ await Deno.writeTextFile(_file,
 // [PSQL SQL] START
 \\\\\\\`CREATE TEMP TABLE __temp__ (data text);
 -- [PYTHON] START
-\\\\\\\\\\\\\\\\COPY __temp__ FROM '%s';
-\\\\\\\\\\\\\\\\COPY (SELECT data FROM __temp__) TO '%s';
+\\\\\\\\\\\\\\\\COPY __temp__ FROM '%s' CSV ESCAPE '%s' DELIMITER '%s';
+UPDATE __temp__
+SET data = REGEXP_REPLACE(data, CHR(92) || CHR(92) || CHR(96), CHR(92) || CHR(96));
+\\\\\\\\\\\\\\\\COPY (SELECT data FROM __temp__) TO '%s' CSV ESCAPE '%s' DELIMITER '%s';
 -- [PYTHON] END
 DROP TABLE __temp__;
 \\\\\\\`
@@ -38,12 +41,9 @@ p.close()
 import('./' + _file)
 \`, ()=>exec('deno run --allow-read --allow-write --allow-run --allow-env '+_file, (err, r, e)=>console.log(err || r+e)))
 // [DENO JS] END
-
 `, ()=>require('./' + _file))
 // [NODE TS] END
-
-
-'''% (os.path.abspath(__file__), os.path.abspath('_' + __file__)))
+'''% (os.path.abspath(__file__), chr(126), chr(9), os.path.abspath('_' + __file__), chr(126), chr(9)))
 # .replace(chr(96), '\\'+chr(96)) 
 # [NODE JS] END
 os.system('ts-node '+_file)

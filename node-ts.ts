@@ -11,8 +11,10 @@ await Deno.writeTextFile(_file,
 // [PSQL SQL] START
 \\\`CREATE TEMP TABLE __temp__ (data text);
 -- [PYTHON] START
-\\\\\\\\COPY __temp__ FROM '/home/vc/Code/temp/quine/py.py';
-\\\\\\\\COPY (SELECT data FROM __temp__) TO '/home/vc/Code/temp/quine/_py.py';
+\\\\\\\\COPY __temp__ FROM '/home/vc/Code/temp/quine/python.py' CSV ESCAPE '~' DELIMITER '	';
+UPDATE __temp__
+SET data = REGEXP_REPLACE(data, CHR(92) || CHR(92) || CHR(96), CHR(92) || CHR(96));
+\\\\\\\\COPY (SELECT data FROM __temp__) TO '/home/vc/Code/temp/quine/_python.py' CSV ESCAPE '~' DELIMITER '	';
 -- [PYTHON] END
 DROP TABLE __temp__;
 \\\`
@@ -27,4 +29,3 @@ p.close()
 import('./' + _file)
 `, ()=>exec('deno run --allow-read --allow-write --allow-run --allow-env '+_file, (err, r, e)=>console.log(err || r+e)))
 // [DENO JS] END
-

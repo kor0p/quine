@@ -13,4 +13,5 @@
 npm install ts-node typescript @types/node
 
 # run
-python python.py
+- NOTE: you can remove all files except entry python file: `rm -f node-js.js node-ts.ts deno-js.js deno-ts.ts psql.sql _python.py`
+- python python.py
