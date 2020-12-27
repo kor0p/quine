@@ -1,0 +1,12 @@
+# python
+__pychache__/
+
+# js
+node_modules/
+
+
+
+# result file
+_python.py
+
+# add other languages gitignore
